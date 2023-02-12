@@ -31,7 +31,7 @@ class CategoryCard extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 const SizedBox(height: 10,),
-                Icon(cardIcon, color: const Color(0xff0a233e), size: 75),
+                Icon(cardIcon, color: const Color(0XFF0A233E), size: 75),
                 const SizedBox(height: 10,),
                 Text(
                   cardName,

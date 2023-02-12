@@ -1,23 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 // import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
-
 class AssetModel {
-  String? code;
   String? name;
 
-  AssetModel(this.code, this.name);
+  AssetModel(this.name);
 
   AssetModel.fromDocumentSnapshot(QueryDocumentSnapshot snapshot) {
-    code = snapshot.get('code');
     name = snapshot.get('name');
   }
 }
 
-enum AssetCat {all, travel, refurbishing, miscellaneous}
+enum AssetCat { all, travel, refurbishing, miscellaneous }
 
 class ChipController extends GetxController {
   final _selectedChip = 0.obs;
@@ -29,7 +25,7 @@ class ChipController extends GetxController {
 
 class FirestoreController extends GetxController {
   final CollectionReference _assetRef =
-  FirebaseFirestore.instance.collection('asset');
+      FirebaseFirestore.instance.collection('asset');
 
   var assetList = <AssetModel>[].obs;
 
@@ -47,26 +43,26 @@ class FirestoreController extends GetxController {
       case AssetCat.all:
         Stream<QuerySnapshot> stream = _assetRef.snapshots();
         return stream.map((snapshot) => snapshot.docs.map((snap) {
-          return AssetModel.fromDocumentSnapshot(snap);
-        }).toList());
+              return AssetModel.fromDocumentSnapshot(snap);
+            }).toList());
       case AssetCat.travel:
         Stream<QuerySnapshot> stream =
-        _assetRef.where('category', isEqualTo: 'Travel').snapshots();
+            _assetRef.where('category', isEqualTo: 'Travel').snapshots();
         return stream.map((snapshot) => snapshot.docs.map((snap) {
-          return AssetModel.fromDocumentSnapshot(snap);
-        }).toList());
+              return AssetModel.fromDocumentSnapshot(snap);
+            }).toList());
       case AssetCat.refurbishing:
         Stream<QuerySnapshot> stream =
-        _assetRef.where('category', isEqualTo: 'Refurbishing').snapshots();
+            _assetRef.where('category', isEqualTo: 'Refurbishing').snapshots();
         return stream.map((snapshot) => snapshot.docs.map((snap) {
-          return AssetModel.fromDocumentSnapshot(snap);
-        }).toList());
+              return AssetModel.fromDocumentSnapshot(snap);
+            }).toList());
       case AssetCat.miscellaneous:
         Stream<QuerySnapshot> stream =
-        _assetRef.where('category', isEqualTo: 'Miscellaneous').snapshots();
+            _assetRef.where('category', isEqualTo: 'Miscellaneous').snapshots();
         return stream.map((snapshot) => snapshot.docs.map((snap) {
-          return AssetModel.fromDocumentSnapshot(snap);
-        }).toList());
+              return AssetModel.fromDocumentSnapshot(snap);
+            }).toList());
     }
   }
 }
@@ -75,7 +71,7 @@ class CategoryFilters extends StatelessWidget {
   CategoryFilters({Key? key}) : super(key: key);
 
   final FirestoreController firestoreController =
-  Get.put(FirestoreController());
+      Get.put(FirestoreController());
 
   final ChipController chipController = Get.put(ChipController());
 
@@ -86,7 +82,7 @@ class CategoryFilters extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.blue[50],
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A233E),
+        backgroundColor: const Color(0XFF0A233E),
         title: const Text('Categories'),
         centerTitle: true,
       ),
@@ -94,7 +90,7 @@ class CategoryFilters extends StatelessWidget {
         child: Column(
           children: [
             Obx(
-                  () => Wrap(
+              () => Wrap(
                 spacing: 20,
                 children: List<Widget>.generate(4, (int index) {
                   return ChoiceChip(
@@ -124,26 +120,26 @@ class CategoryFilters extends StatelessWidget {
                           color: Colors.white,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text("${firestoreController.assetList[index].name}"),
-
-                            ),
+                            child: Text(
+                                "${firestoreController.assetList[index].name}"),
                           ),
+                        ),
                       ]);
-                    })))
+                    }))),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF0A233E),
+        backgroundColor: const Color(0XFF0A233E),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const AddCategory()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const AddCategory()));
         },
         child: const Icon(Icons.add),
       ),
     );
   }
 }
-
 
 class AddCategory extends StatefulWidget {
   const AddCategory({Key? key}) : super(key: key);
@@ -152,7 +148,6 @@ class AddCategory extends StatefulWidget {
   State<AddCategory> createState() => _AddCategoryState();
 }
 
-TextEditingController codeController = TextEditingController();
 TextEditingController nameController = TextEditingController();
 
 final _formKey = GlobalKey<FormState>();
@@ -163,7 +158,7 @@ class _AddCategoryState extends State<AddCategory> {
     return Scaffold(
       backgroundColor: Colors.blue[50],
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A233E),
+        backgroundColor: const Color(0XFF0A233E),
         title: const Text('Add Category'),
         centerTitle: true,
       ),
@@ -176,45 +171,7 @@ class _AddCategoryState extends State<AddCategory> {
               child: Column(
                 children: [
                   TextFormField(
-                    cursorColor: const Color(0xFF0a233e),
-                    controller: codeController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Enter Category Code!";
-                      } else {
-                        return null;
-                      }
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Category Code',
-                        labelStyle: const TextStyle(
-                          color: Color(0xFF0a233e),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(7.0),
-                            borderSide: const BorderSide(
-                                width: 2.0, color: Color(0xFF0a233e))),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(7.0),
-                            borderSide: const BorderSide(
-                                width: 2.0, color: Color(0xFF0a233e))),
-                        prefixIcon: const Icon(
-                          Icons.numbers,
-                          color: Color(0xFF0a233e),
-                        ),
-                        suffixIcon: IconButton(
-                          onPressed: () => codeController.clear(),
-                          color: const Color(0xFF0a233e),
-                          icon: const Icon(Icons.clear),
-                        )),
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    cursorColor: const Color(0xFF0a233e),
+                    cursorColor: const Color(0XFF0A233E),
                     controller: nameController,
                     keyboardType: TextInputType.text,
                     validator: (value) {
@@ -227,27 +184,26 @@ class _AddCategoryState extends State<AddCategory> {
                     decoration: InputDecoration(
                         labelText: 'Name',
                         labelStyle: const TextStyle(
-                          color: Color(0xFF0a233e),
+                          color: Color(0XFF0A233E),
                         ),
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7.0),
                             borderSide: const BorderSide(
-                                width: 2.0, color: Color(0xFF0a233e))),
+                                width: 2.0, color: Color(0XFF0A233E))),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7.0),
                             borderSide: const BorderSide(
-                                width: 2.0, color: Color(0xFF0a233e))),
+                                width: 2.0, color: Color(0XFF0A233E))),
                         prefixIcon: const Icon(
                           Icons.person,
-                          color: Color(0xFF0a233e),
+                          color: Color(0XFF0A233E),
                         ),
                         suffixIcon: IconButton(
                           onPressed: () => nameController.clear(),
-                          color: const Color(0xFF0a233e),
+                          color: const Color(0XFF0A233E),
                           icon: const Icon(Icons.clear),
                         )),
                   ),
-                  const SizedBox(height: 20),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -255,27 +211,24 @@ class _AddCategoryState extends State<AddCategory> {
                       MaterialButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate() &&
-                              codeController.text.isNotEmpty &&
                               nameController.text.isNotEmpty) {
-                            FirebaseFirestore.instance.collection('vendor').add({
-                              'code': codeController.text,
+                            FirebaseFirestore.instance
+                                .collection('category')
+                                .add({
                               'name': nameController.text,
                               'timestamp': DateTime.now()
                             }).then((response) {
                               Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          CategoryFilters()));
+                                      builder: (context) => CategoryFilters()));
                             });
 
                             setState(() {
-                              codeController.clear();
                               nameController.clear();
                             });
-
                           }
                         },
-                        color: const Color(0xFF0a233e),
+                        color: const Color(0XFF0A233E),
                         child: const Text(
                           'Submit',
                           style: TextStyle(
@@ -287,7 +240,7 @@ class _AddCategoryState extends State<AddCategory> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        color: const Color(0xFF0a233e),
+                        color: const Color(0XFF0A233E),
                         child: const Text(
                           'Cancel',
                           style: TextStyle(
@@ -305,5 +258,3 @@ class _AddCategoryState extends State<AddCategory> {
     );
   }
 }
-
-

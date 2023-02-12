@@ -29,7 +29,7 @@ class _ExcelState extends State<Excel> {
     return Scaffold(
       backgroundColor: Colors.blue[50],
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0a233e),
+        backgroundColor: const Color(0XFF0A233E),
         centerTitle: true,
         title: const Text('CSV'),
       ),
@@ -60,13 +60,12 @@ class _ExcelState extends State<Excel> {
               stream: FirebaseFirestore.instance.collection('asset').snapshots(),
               builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator(color: Color(0XFF0A233E)));
                 }
                 return ListView(
                   children: snapshot.data!.docs.map((document) {
 
                     testExcel.add([
-                      document['code'],
                       document['name'],
                       document['category'],
                       document['remarks']
@@ -92,7 +91,7 @@ class _ExcelState extends State<Excel> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF0a233e),
+        backgroundColor: const Color(0XFF0A233E),
         onPressed: () {
           generateCsv();
         },

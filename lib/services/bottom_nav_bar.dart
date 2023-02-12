@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../screens/category.dart';
 import '../screens/homepage.dart';
@@ -20,8 +21,8 @@ class BottomNavBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           BottomNavItem(itemName: 'Categories', iconName: Icons.category, press: CategoryFilters()),
-          const BottomNavItem(itemName: 'Sale', iconName: Icons.attach_money, press: MakeSale()),
-          const BottomNavItem(itemName: 'Settings', iconName: Icons.settings, press: UserPage(),)
+          BottomNavItem(itemName: 'Sale', iconName: FontAwesomeIcons.indianRupeeSign, press: SettingsPage()),
+          const BottomNavItem(itemName: 'Settings', iconName: Icons.settings, press: SettingsPage())
         ],
       ),
     );

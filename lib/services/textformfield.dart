@@ -25,7 +25,7 @@ class TextFormFieldCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
         enabled: enabled,
-        cursorColor: const Color(0xFF0a233e),
+        cursorColor: const Color(0XFF0A233E),
         controller: controller,
         keyboardType: keyboardType,
         inputFormatters: inputFormatters,
@@ -39,23 +39,23 @@ class TextFormFieldCard extends StatelessWidget {
         decoration: InputDecoration(
           labelText: labelText,
           labelStyle: const TextStyle(
-            color: Color(0xFF0a233e),
+            color: Color(0XFF0A233E),
           ),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(7.0),
               borderSide:
-                  const BorderSide(width: 2.0, color: Color(0xFF0a233e))),
+                  const BorderSide(width: 2.0, color: Color(0XFF0A233E))),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(7.0),
               borderSide:
-                  const BorderSide(width: 2.0, color: Color(0xFF0a233e))),
+                  const BorderSide(width: 2.0, color: Color(0XFF0A233E))),
           prefixIcon: Icon(
             prefixIcon,
-            color: const Color(0xFF0a233e),
+            color: const Color(0XFF0A233E),
           ),
           suffixIcon: IconButton(
             onPressed: () => controller.clear(),
-            color: const Color(0xFF0a233e),
+            color: const Color(0XFF0A233E),
             icon: const Icon(Icons.clear),
           ),
         ));

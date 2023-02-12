@@ -37,6 +37,13 @@
             {
               "client_id": "773540972927-2h65ulom7031c52vn0jn63kuv28kmrla.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "773540972927-h1nnfmai7fkkcva8ek80orr6bpornstf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.assetracBespokepelle"
+              }
             }
           ]
         }

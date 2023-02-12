@@ -7,16 +7,23 @@ import 'package:intl/intl.dart';
 import '../services/textformfield.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class AssetData {
-  AssetData(this.asset, this.sales);
+import '../services/utils.dart';
 
+class AssetSalesData {
+  AssetSalesData(this.asset, this.sales);
   final String asset;
   final int sales;
 }
 
+class AssetQuantityData {
+  AssetQuantityData(this.asset, this.quantity);
+  final String asset;
+  final int quantity;
+}
+
 var xData;
 
-TextEditingController codeController = TextEditingController();
+
 TextEditingController nameController = TextEditingController();
 TextEditingController categoryController = TextEditingController();
 TextEditingController mrpController = TextEditingController();
@@ -38,13 +45,13 @@ class _SalesState extends State<Sales> {
   @override
   void initState() {
     _tooltipBehavior =
-        TooltipBehavior(enable: true, color: const Color(0xFF0A233E));
+        TooltipBehavior(enable: true, color: const Color(0XFF0A233E));
     super.initState();
   }
 
   DateTimeRange dateRange = DateTimeRange(
-      start: DateTime(DateTime.now().year, DateTime.now().month, 01),
-      end: DateTime(DateTime.now().year, DateTime.now().month, 30));
+      start: DateTime(DateTime.now().year, 01, 01),
+      end: DateTime(DateTime.now().year, 12, 30));
 
   final _scaffoldKey = GlobalKey<FormState>();
 
@@ -112,7 +119,7 @@ class _SalesState extends State<Sales> {
                   .snapshots(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator(color: Color(0XFF0A233E)));
                 }
                 if (snapshot.hasData) {
                   QuerySnapshot querySnapshot = snapshot.data;
@@ -121,7 +128,6 @@ class _SalesState extends State<Sales> {
                   List<Map> items = documents
                       .map((e) => {
                             'id': e.id,
-                            'code': e['code'],
                             'name': e['name'],
                             'category': e['category'],
                             'mrp': e['mrp'],
@@ -139,51 +145,71 @@ class _SalesState extends State<Sales> {
                     //     overflowMode: LegendItemOverflowMode.wrap),
                     tooltipBehavior: _tooltipBehavior,
                     series: <ChartSeries>[
-                      BarSeries<AssetData, String>(
+                      BarSeries<AssetSalesData, String>(
                           name: 'Sales',
-                          color: const Color(0xFF0A233E),
+                          color: const Color(0XFF0A233E),
                           dataSource: [
                             for (int i = 0; i < items.length; i++) ...[
-                              AssetData(
-                                  items[i]['name'],
-                                  (int.parse(items[i]['mrp']) *
-                                      int.parse(items[i]['quantity']) *
-                                      (100 - int.parse(items[i]['discount'])) ~/
-                                      100)
+                              AssetSalesData(
+                                '${items[i]['quantity']} - ${items[i]['name']}',
+                                (int.parse(items[i]['mrp']) *
+                                    int.parse(items[i]['quantity']) *
+                                    (100 - int.parse(items[i]['discount'])) ~/
+                                    100),
 
-                                  // ((int.parse(items[i]['mrp']) *
-                                  //         int.parse(items[i]['quantity'])) -
-                                  //     (int.parse(items[i]['discount']) ~/
-                                  //             (100)) *
-                                  //         ((int.parse(items[i]['mrp']) *
-                                  //             int.parse(items[i]['quantity'])))),
-
-                                  )
+                                // ((int.parse(items[i]['mrp']) *
+                                //         int.parse(items[i]['quantity'])) -
+                                //     (int.parse(items[i]['discount']) ~/
+                                //             (100)) *
+                                //         ((int.parse(items[i]['mrp']) *
+                                //             int.parse(items[i]['quantity'])))),
+                              )
                             ],
                           ],
-                          xValueMapper: (AssetData data, _) => data.asset,
-                          yValueMapper: (AssetData data, _) => data.sales,
+                          xValueMapper: (AssetSalesData data, _) => data.asset,
+                          yValueMapper: (AssetSalesData data, _) => data.sales,
                           dataLabelSettings: const DataLabelSettings(
-                              isVisible: true, color: Color(0xFF0A233E)),
+                              isVisible: true, color: Color(0XFF0A233E)),
                           enableTooltip: true),
+                      // BarSeries<AssetQuantityData, String>(
+                      //     dataSource: [
+                      //       for (int i = 0; i < items.length; i++) ...[
+                      //       AssetQuantityData(
+                      //           items[i]['name'],
+                      //           int.parse(items[i]['quantity'])
+                      //
+                      //         // ((int.parse(items[i]['mrp']) *
+                      //         //         int.parse(items[i]['quantity'])) -
+                      //         //     (int.parse(items[i]['discount']) ~/
+                      //         //             (100)) *
+                      //         //         ((int.parse(items[i]['mrp']) *
+                      //         //             int.parse(items[i]['quantity'])))),
+                      //
+                      //       )
+                      //     ],
+                      //     ],
+                      //     xValueMapper: (AssetQuantityData data, _) => data.asset,
+                      //     yValueMapper: (AssetQuantityData data, _) => data.quantity)
                     ],
                     primaryXAxis: CategoryAxis(),
                     primaryYAxis: NumericAxis(
                         edgeLabelPlacement: EdgeLabelPlacement.shift,
                         numberFormat: NumberFormat.simpleCurrency(
-                            decimalDigits: 0, name: 'INR')),
+                            decimalDigits: 0, name: 'INR'),
+                    ),
                   );
                 }
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator(color: Color(0XFF0A233E)));
               }),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const MakeSale()));
+
+          // Navigator.push(context,
+          //     MaterialPageRoute(builder: (context) => MakeSale()));
         },
-        backgroundColor: const Color(0xFF0A233E),
+        backgroundColor: const Color(0XFF0A233E),
         child: const Text('₹', style: TextStyle(fontSize: 25)),
       ),
     );
@@ -205,8 +231,8 @@ class _SalesState extends State<Sales> {
       },
       context: context,
       initialDateRange: dateRange,
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
+      firstDate: DateTime(2010),
+      lastDate: DateTime.now(),
     );
 
     if (newDateRange == null) return;
@@ -225,16 +251,16 @@ class Filters extends StatefulWidget {
 }
 
 class _FiltersState extends State<Filters> {
-  final allFilters = CheckBoxState(title: 'Select All', value: true);
-
-  final filters = [
-    CheckBoxState(title: 'Filter1', value: true),
-    CheckBoxState(title: 'Filter2', value: true),
-    CheckBoxState(title: 'Filter3', value: true),
-    CheckBoxState(title: 'Filter4', value: true)
-  ];
-
-  final filterTypes = [];
+  // final allFilters = CheckBoxState(title: 'Select All', value: true);
+  //
+  // final filters = [
+  //   CheckBoxState(title: 'Filter1', value: true),
+  //   CheckBoxState(title: 'Filter2', value: true),
+  //   CheckBoxState(title: 'Filter3', value: true),
+  //   CheckBoxState(title: 'Filter4', value: true)
+  // ];
+  //
+  // final filterTypes = [];
 
   @override
   Widget build(BuildContext context) {
@@ -242,96 +268,78 @@ class _FiltersState extends State<Filters> {
         stream: FirebaseFirestore.instance.collection('sales').snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: Color(0XFF0A233E)));
           }
 
           if (snapshot.hasData) {
             return ListView.builder(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: snapshot.data.docs.length,
-            itemBuilder: (context, index) {
-              DocumentSnapshot document = snapshot.data.docs[index];
-              Map<String, dynamic> data =
-                  document.data() as Map<String, dynamic>;
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: snapshot.data.docs.length,
+              itemBuilder: (context, index) {
+                DocumentSnapshot document = snapshot.data.docs[index];
+                Map<String, dynamic> data =
+                    document.data() as Map<String, dynamic>;
 
-              return Column(
-                children: [
-                  CheckboxListTile(
-                      activeColor: const Color(0XFF0A233E),
-                      title: Text(data['name']),
-                      value: data['value'],
-                      onChanged: (bool? value) {
-                        FirebaseFirestore.instance
-                            .collection('sales')
-                            .doc(document.id)
-                            .update({'value': value!});
-                      }),
-                ],
-              );
-            },
-                  );
-            // return Drawer(
-            //   child: ListView(
-            //     children: [
-            //       const DrawerHeader(
-            //         decoration: BoxDecoration(color: Color(0xFF0A233E)),
-            //         child: Text(
-            //           'Filters',
-            //           style: TextStyle(
-            //               color: Colors.white,
-            //               fontWeight: FontWeight.bold,
-            //               fontSize: 40),
-            //         ),
-            //       ),
-            //       buildGroupCheckBox(allFilters),
-            //       const Divider(),
-            //       ...filters.map(buildSingleCheckBox).toList(),
-            //     ],
-            //   ),
-            // );
+                return Column(
+                  children: [
+                    CheckboxListTile(
+                        activeColor: const Color(0XFF0A233E),
+                        title: Text(data['name']),
+                        value: data['value'],
+                        onChanged: (bool? value) {
+                          FirebaseFirestore.instance
+                              .collection('sales')
+                              .doc(document.id)
+                              .update({'value': value!});
+                        }),
+                  ],
+                );
+              },
+            );
           }
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: Color(0XFF0A233E)));
         });
   }
 
-  Widget buildSingleCheckBox(CheckBoxState checkbox) => CheckboxListTile(
-      controlAffinity: ListTileControlAffinity.leading,
-      activeColor: const Color(0XFF0A233E),
-      value: checkbox.value,
-      title: Text(checkbox.title, style: const TextStyle(fontSize: 15)),
-      onChanged: (value) => setState(() {
-            checkbox.value = value!;
-            allFilters.value = filters.every((filter) => filter.value);
-          }));
-
-  Widget buildGroupCheckBox(CheckBoxState checkbox) => CheckboxListTile(
-        controlAffinity: ListTileControlAffinity.leading,
-        activeColor: const Color(0XFF0A233E),
-        value: checkbox.value,
-        title: Text(checkbox.title, style: const TextStyle(fontSize: 15)),
-        onChanged: toggleGroupCheckbox,
-      );
-
-  void toggleGroupCheckbox(bool? value) {
-    if (value == null) return;
-
-    setState(() {
-      allFilters.value = value;
-      filters.forEach((filter) => filter.value = value);
-    });
-  }
+// Widget buildSingleCheckBox(CheckBoxState checkbox) => CheckboxListTile(
+//     controlAffinity: ListTileControlAffinity.leading,
+//     activeColor: const Color(0XFF0A233E),
+//     value: checkbox.value,
+//     title: Text(checkbox.title, style: const TextStyle(fontSize: 15)),
+//     onChanged: (value) => setState(() {
+//           checkbox.value = value!;
+//           allFilters.value = filters.every((filter) => filter.value);
+//         }));
+//
+// Widget buildGroupCheckBox(CheckBoxState checkbox) => CheckboxListTile(
+//       controlAffinity: ListTileControlAffinity.leading,
+//       activeColor: const Color(0XFF0A233E),
+//       value: checkbox.value,
+//       title: Text(checkbox.title, style: const TextStyle(fontSize: 15)),
+//       onChanged: toggleGroupCheckbox,
+//     );
+//
+// void toggleGroupCheckbox(bool? value) {
+//   if (value == null) return;
+//
+//   setState(() {
+//     allFilters.value = value;
+//     filters.forEach((filter) => filter.value = value);
+//   });
+// }
 }
 
-class CheckBoxState {
-  final String title;
-  bool value;
-
-  CheckBoxState({required this.title, required this.value});
-}
+// class CheckBoxState {
+//   final String title;
+//   bool value;
+//
+//   CheckBoxState({required this.title, required this.value});
+// }
 
 class MakeSale extends StatefulWidget {
-  const MakeSale({Key? key}) : super(key: key);
+  Map<String, dynamic> assetItem;
+  MakeSale(this.assetItem, {Key? key}) : super(key: key);
 
   @override
   State<MakeSale> createState() => _MakeSaleState();
@@ -340,19 +348,30 @@ class MakeSale extends StatefulWidget {
 final _formKey = GlobalKey<FormState>();
 
 class _MakeSaleState extends State<MakeSale> {
+
+  late DocumentReference _reference;
+
+  @override
+  initState() {
+    super.initState();
+    _reference = FirebaseFirestore.instance
+        .collection('stock')
+        .doc(widget.assetItem['id']);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue[50],
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A233E),
+        backgroundColor: const Color(0XFF0A233E),
         title: const Text('Make a Sale'),
       ),
       body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance.collection('asset').snapshots(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator(color: Color(0XFF0A233E)));
             }
             if (snapshot.hasData) {
               QuerySnapshot querySnapshot = snapshot.data;
@@ -361,7 +380,6 @@ class _MakeSaleState extends State<MakeSale> {
               List<Map> items = documents
                   .map((e) => {
                         'id': e.id,
-                        'code': e['code'],
                         'name': e['name'],
                         'category': e['category'],
                         'mrp': e['mrp'],
@@ -379,9 +397,9 @@ class _MakeSaleState extends State<MakeSale> {
                       child: Column(children: [
                         const SizedBox(height: 20),
                         const Text(
-                          'What asset did you sell?',
+                          'Which asset did you sell?',
                           style: TextStyle(
-                              color: Color(0xFF0A233E),
+                              color: Color(0XFF0A233E),
                               fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 25),
@@ -391,16 +409,16 @@ class _MakeSaleState extends State<MakeSale> {
                             dropdownSearchDecoration: InputDecoration(
                               labelText: 'Assets',
                               labelStyle: const TextStyle(
-                                color: Color(0xFF0a233e),
+                                color: Color(0XFF0A233E),
                               ),
                               enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(7.0),
                                   borderSide: const BorderSide(
-                                      width: 2.0, color: Color(0xFF0a233e))),
+                                      width: 2.0, color: Color(0XFF0A233E))),
                               focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(7.0),
                                   borderSide: const BorderSide(
-                                      width: 2.0, color: Color(0xFF0a233e))),
+                                      width: 2.0, color: Color(0XFF0A233E))),
                               // suffixIcon: IconButton(
                               //         icon: Icon(Icons.check),
                               //         onPressed: () {
@@ -423,11 +441,9 @@ class _MakeSaleState extends State<MakeSale> {
                         ),
                         const SizedBox(height: 15),
                         MaterialButton(
-                            color: const Color(0xFF0A233E),
+                            color: const Color(0XFF0A233E),
                             onPressed: () {
                               setState(() {
-                                codeController.text =
-                                    xData['id'].toString().substring(0, 10);
                                 nameController.text = xData['name'];
                                 categoryController.text = xData['category'];
                                 mrpController.text = xData['mrp'];
@@ -437,17 +453,6 @@ class _MakeSaleState extends State<MakeSale> {
                               'Choose',
                               style: TextStyle(color: Colors.white),
                             )),
-                        TextFormFieldCard(
-                            controller: codeController,
-                            enabled: false,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            validatorText: 'Enter Asset Code!',
-                            labelText: 'Code',
-                            prefixIcon: Icons.numbers),
-                        const SizedBox(height: 20),
                         TextFormFieldCard(
                             controller: nameController,
                             enabled: false,
@@ -538,7 +543,6 @@ class _MakeSaleState extends State<MakeSale> {
                                   FirebaseFirestore.instance
                                       .collection('sales')
                                       .add({
-                                    'code': codeController.text,
                                     'name': nameController.text,
                                     'category': categoryController.text,
                                     'mrp': mrpController.text,
@@ -553,9 +557,27 @@ class _MakeSaleState extends State<MakeSale> {
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 const Sales()));
+                                    Navigator.pop(context);
                                   });
+
+                                  FirebaseFirestore.instance
+                                      .runTransaction((transaction) async {
+                                    final snapshot =
+                                    await transaction.get(_reference);
+                                    final newQuantity =
+                                        snapshot.get('quantity') -
+                                            int.parse(quantityController.text);
+                                    transaction.update(_reference, {
+                                      // 'name': _nameController.text,
+                                      // 'category': _categoryController.text,
+                                      // 'mrp': _mrpController.text,
+                                      'quantity': newQuantity
+                                    });
+                                  }).then((value) {
+                                    Navigator.pop(context);
+                                  }, onError: (e) => Utils.showSnackBar(e.toString()));
+
                                   setState(() {
-                                    codeController.clear();
                                     nameController.clear();
                                     categoryController.clear();
                                     mrpController.clear();
@@ -566,7 +588,7 @@ class _MakeSaleState extends State<MakeSale> {
                                   });
                                 }
                               },
-                              color: const Color(0xFF0A233E),
+                              color: const Color(0XFF0A233E),
                               child: const Text(
                                 'Submit',
                                 style: TextStyle(
@@ -578,7 +600,6 @@ class _MakeSaleState extends State<MakeSale> {
                             MaterialButton(
                               onPressed: () {
                                 Navigator.pop(context);
-                                codeController.clear();
                                 nameController.clear();
                                 categoryController.clear();
                                 mrpController.clear();
@@ -587,7 +608,7 @@ class _MakeSaleState extends State<MakeSale> {
                                 dosController.clear();
                                 clientController.clear();
                               },
-                              color: const Color(0xFF0a233e),
+                              color: const Color(0XFF0A233E),
                               child: const Text(
                                 'Cancel',
                                 style: TextStyle(
@@ -603,7 +624,7 @@ class _MakeSaleState extends State<MakeSale> {
                 ),
               );
             }
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: Color(0XFF0A233E)));
           }),
     );
   }

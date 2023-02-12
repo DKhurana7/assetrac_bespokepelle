@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 
 class ClientMaster extends StatefulWidget {
   ClientMaster({Key? key}) : super(key: key) {
-    stream = _reference.orderBy('code').snapshots();
+    stream = _reference.orderBy('name').snapshots();
   }
 
   final CollectionReference _reference =
@@ -29,15 +29,12 @@ class _ClientMasterState extends State<ClientMaster> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const AlgoliaSearch(
-                            indexName: 'client',
-                            imgName:
-                                'https://i1.wp.com/www.slntechnologies.com/wp-content/uploads/2017/08/ef3-placeholder-image.jpg?ssl=1')));
+                        builder: (context) => const AlgoliaClientSearch()));
               },
             )
           ],
           centerTitle: true,
-          backgroundColor: const Color(0xFF0a233e),
+          backgroundColor: const Color(0XFF0A233E),
           title: const Text('Client Master')),
       body: StreamBuilder<QuerySnapshot>(
           stream: widget.stream,
@@ -52,7 +49,6 @@ class _ClientMasterState extends State<ClientMaster> {
               List<Map> items = documents
                   .map((e) => {
                         'id': e.id,
-                        'code': e['code'],
                         'name': e['name'],
                         'companyName': e['companyName'],
                         'contact': e['contact'],
@@ -85,17 +81,20 @@ class _ClientMasterState extends State<ClientMaster> {
                             subtitle: Text(thisItem['id']
                                 .toString()
                                 .substring(0, 10)),
-                            trailing: IconButton(icon: const Icon(Icons.more_vert),color: const Color(0XFF0A233E), onPressed: () {},),
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => ClientDetails(thisItem['id'])));
+                            },
+                            // trailing: IconButton(icon: const Icon(Icons.more_vert),color: const Color(0XFF0A233E), onPressed: () {},),
                           )
                         ],
                       ),
                     );
                   });
             }
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: Color(0XFF0A233E)));
           }),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF0a233e),
+        backgroundColor: const Color(0XFF0A233E),
         onPressed: () {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => const AddClient()));
@@ -126,7 +125,8 @@ class ClientDetails extends StatelessWidget {
       backgroundColor: Colors.blue[50],
       appBar: AppBar(
         title: const Text('Client Details'),
-        backgroundColor: const Color(0xFF0a233e),
+        centerTitle: true,
+        backgroundColor: const Color(0XFF0A233E),
         actions: [
           PopupMenuButton<MenuItem>(
               onSelected: (value) async {
@@ -143,7 +143,7 @@ class ClientDetails extends StatelessWidget {
                         return Center(
                           child: AlertDialog(
                             actionsPadding: const EdgeInsets.all(10.0),
-                            backgroundColor: const Color(0xFF0a233e),
+                            backgroundColor: const Color(0XFF0A233E),
                             title: const Text(
                               "Deletion",
                               style: TextStyle(color: Colors.white),
@@ -161,6 +161,7 @@ class ClientDetails extends StatelessWidget {
                               OutlinedButton(
                                 onPressed: () {
                                   _reference.delete();
+                                  Navigator.pop(context);
                                   Navigator.pop(context);
                                 },
                                 child: const Text("Delete",
@@ -206,72 +207,59 @@ class ClientDetails extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    // Center(
-                    //   child: Container(
-                    //     height: 400,
-                    //     width: 400,
-                    //     decoration: BoxDecoration(
-                    //         image: DecorationImage(
-                    //             fit: BoxFit.cover,
-                    //             image: NetworkImage(data['img'])
-                    //           //   image: NetworkImage("https://firebasestorage.googleapis.com/v0/b/assetmanagement-1e91f.appspot.com/o/images%2F1667761511575?alt=media&token=d634c0d1-ea81-4811-a4ff-c71d88c79c37")
-                    //         )
-                    //     ),
-                    //   ),
-                    // ),
                     const SizedBox(height: 20),
                     const Text(
-                      "Vendor Code:",
+                      "Code:",
                       style:
-                          TextStyle(fontSize: 20.0, color: Color(0xff0a233e)),
+                          TextStyle(fontSize: 20.0, color: Color(0XFF0A233E)),
                     ),
                     const SizedBox(height: 10),
                     Text(
                       itemId.substring(0, 10),
                       style: const TextStyle(
                           fontSize: 30,
-                          color: Color(0xff0a233e),
+                          color: Color(0XFF0A233E),
                           fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),
                     const Text(
-                      "Vendor Name: ",
+                      "Name: ",
                       style:
-                          TextStyle(fontSize: 20.0, color: Color(0xff0a233e)),
+                          TextStyle(fontSize: 20.0, color: Color(0XFF0A233E)),
                     ),
                     const SizedBox(height: 10),
                     Text(data['name'],
                         style: const TextStyle(
                             fontSize: 30.0,
-                            color: Color(0xff0a233e),
+                            color: Color(0XFF0A233E),
                             fontWeight: FontWeight.bold)),
                     const SizedBox(height: 20),
-                    const Text("Vendor Company Name",
+                    const Text("Company Name",
                         style: TextStyle(
-                            fontSize: 20.0, color: Color(0xff0a233e))),
+                            fontSize: 20.0, color: Color(0XFF0A233E))),
                     const SizedBox(height: 10, width: 200),
                     Text(data['companyName'],
                         style: const TextStyle(
-                          color: Color(0xff0a233e),
+                          color: Color(0XFF0A233E),
                           fontSize: 30.0,
                           fontWeight: FontWeight.bold,
                         )),
                     const SizedBox(height: 20, width: 200),
-                    const Text("Vendor Contact Details:",
+                    const Text("Contact Details:",
                         style: TextStyle(
-                            fontSize: 20.0, color: Color(0xff0a233e))),
+                            fontSize: 20.0, color: Color(0XFF0A233E))),
                     const SizedBox(height: 10, width: 200),
                     Text(data['contact'],
                         style: const TextStyle(
                             fontSize: 30.0,
-                            color: Color(0xff0a233e),
+                            color: Color(0XFF0A233E),
                             fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
             );
           }
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: Color(0XFF0A233E)));
         },
       ),
     );
@@ -280,7 +268,6 @@ class ClientDetails extends StatelessWidget {
 
 class EditClient extends StatefulWidget {
   EditClient(this._assetItem, {Key? key}) : super(key: key) {
-    _codeController = TextEditingController(text: _assetItem['code']);
     _nameController = TextEditingController(text: _assetItem['name']);
     _companyNameController =
         TextEditingController(text: _assetItem['companyName']);
@@ -293,7 +280,6 @@ class EditClient extends StatefulWidget {
   final Map _assetItem;
   late final DocumentReference _reference;
 
-  late final TextEditingController _codeController;
   late final TextEditingController _nameController;
   late final TextEditingController _companyNameController;
   late final TextEditingController _contactController;
@@ -310,7 +296,7 @@ class _EditClientState extends State<EditClient> {
     return Scaffold(
       backgroundColor: Colors.blue[50],
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0a233e),
+        backgroundColor: const Color(0XFF0A233E),
         title: const Text("Edit"),
       ),
       body: Padding(
@@ -321,24 +307,6 @@ class _EditClientState extends State<EditClient> {
             child: Column(
               children: [
                 const SizedBox(height: 20),
-                TextFormField(
-                  controller: widget._codeController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
-                  decoration: InputDecoration(
-                      labelText: "Client Code",
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10))),
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please enter the client code";
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 30),
                 TextFormField(
                   controller: widget._nameController,
                   decoration: InputDecoration(
@@ -391,24 +359,24 @@ class _EditClientState extends State<EditClient> {
                     ElevatedButton(
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all(
-                                const Color(0xFF0a233e))),
+                                const Color(0XFF0A233E))),
                         onPressed: () {
                           setState(() {
                             if (_key.currentState!.validate()) {
-                              String code = widget._codeController.text;
                               String name = widget._nameController.text;
                               String companyName =
                                   widget._companyNameController.text;
                               String contact = widget._contactController.text;
 
                               Map<String, String> dataToUpdate = {
-                                'code': code,
                                 'name': name,
                                 'companyName': companyName,
                                 'contact': contact
                               };
 
                               widget._reference.update(dataToUpdate);
+                              Navigator.pop(context);
+                              Navigator.pop(context);
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -421,7 +389,7 @@ class _EditClientState extends State<EditClient> {
                     ElevatedButton(
                         style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all(
-                                const Color(0xFF0a233e))),
+                                const Color(0XFF0A233E))),
                         onPressed: () {
                           Navigator.pop(context);
                         },
@@ -444,7 +412,6 @@ class AddClient extends StatefulWidget {
   State<AddClient> createState() => _AddClientState();
 }
 
-TextEditingController codeController = TextEditingController();
 TextEditingController nameController = TextEditingController();
 TextEditingController companyNameController = TextEditingController();
 TextEditingController contactController = TextEditingController();
@@ -457,7 +424,7 @@ class _AddClientState extends State<AddClient> {
     return Scaffold(
       backgroundColor: Colors.blue[50],
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A233E),
+        backgroundColor: const Color(0XFF0A233E),
         title: const Text('Add Client'),
         centerTitle: true,
       ),
@@ -470,45 +437,7 @@ class _AddClientState extends State<AddClient> {
               child: Column(
                 children: [
                   TextFormField(
-                    cursorColor: const Color(0xFF0a233e),
-                    controller: codeController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Enter Client Code!";
-                      } else {
-                        return null;
-                      }
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Client Code',
-                        labelStyle: const TextStyle(
-                          color: Color(0xFF0a233e),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(7.0),
-                            borderSide: const BorderSide(
-                                width: 2.0, color: Color(0xFF0a233e))),
-                        focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(7.0),
-                            borderSide: const BorderSide(
-                                width: 2.0, color: Color(0xFF0a233e))),
-                        prefixIcon: const Icon(
-                          Icons.numbers,
-                          color: Color(0xFF0a233e),
-                        ),
-                        suffixIcon: IconButton(
-                          onPressed: () => codeController.clear(),
-                          color: const Color(0xFF0a233e),
-                          icon: const Icon(Icons.clear),
-                        )),
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    cursorColor: const Color(0xFF0a233e),
+                    cursorColor: const Color(0XFF0A233E),
                     controller: nameController,
                     keyboardType: TextInputType.text,
                     validator: (value) {
@@ -521,29 +450,29 @@ class _AddClientState extends State<AddClient> {
                     decoration: InputDecoration(
                         labelText: 'Name',
                         labelStyle: const TextStyle(
-                          color: Color(0xFF0a233e),
+                          color: Color(0XFF0A233E),
                         ),
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7.0),
                             borderSide: const BorderSide(
-                                width: 2.0, color: Color(0xFF0a233e))),
+                                width: 2.0, color: Color(0XFF0A233E))),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7.0),
                             borderSide: const BorderSide(
-                                width: 2.0, color: Color(0xFF0a233e))),
+                                width: 2.0, color: Color(0XFF0A233E))),
                         prefixIcon: const Icon(
                           Icons.person,
-                          color: Color(0xFF0a233e),
+                          color: Color(0XFF0A233E),
                         ),
                         suffixIcon: IconButton(
                           onPressed: () => nameController.clear(),
-                          color: const Color(0xFF0a233e),
+                          color: const Color(0XFF0A233E),
                           icon: const Icon(Icons.clear),
                         )),
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
-                    cursorColor: const Color(0xFF0a233e),
+                    cursorColor: const Color(0XFF0A233E),
                     controller: companyNameController,
                     keyboardType: TextInputType.text,
                     validator: (value) {
@@ -556,29 +485,29 @@ class _AddClientState extends State<AddClient> {
                     decoration: InputDecoration(
                         labelText: 'Company Name',
                         labelStyle: const TextStyle(
-                          color: Color(0xFF0a233e),
+                          color: Color(0XFF0A233E),
                         ),
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7.0),
                             borderSide: const BorderSide(
-                                width: 2.0, color: Color(0xFF0a233e))),
+                                width: 2.0, color: Color(0XFF0A233E))),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7.0),
                             borderSide: const BorderSide(
-                                width: 2.0, color: Color(0xFF0a233e))),
+                                width: 2.0, color: Color(0XFF0A233E))),
                         prefixIcon: const Icon(
                           Icons.title,
-                          color: Color(0xFF0a233e),
+                          color: Color(0XFF0A233E),
                         ),
                         suffixIcon: IconButton(
                           onPressed: () => nameController.clear(),
-                          color: const Color(0xFF0a233e),
+                          color: const Color(0XFF0A233E),
                           icon: const Icon(Icons.clear),
                         )),
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
-                    cursorColor: const Color(0xFF0a233e),
+                    cursorColor: const Color(0XFF0A233E),
                     controller: contactController,
                     keyboardType: TextInputType.number,
                     inputFormatters: <TextInputFormatter>[
@@ -594,23 +523,23 @@ class _AddClientState extends State<AddClient> {
                     decoration: InputDecoration(
                         labelText: 'Contact Number',
                         labelStyle: const TextStyle(
-                          color: Color(0xFF0a233e),
+                          color: Color(0XFF0A233E),
                         ),
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7.0),
                             borderSide: const BorderSide(
-                                width: 2.0, color: Color(0xFF0a233e))),
+                                width: 2.0, color: Color(0XFF0A233E))),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(7.0),
                             borderSide: const BorderSide(
-                                width: 2.0, color: Color(0xFF0a233e))),
+                                width: 2.0, color: Color(0XFF0A233E))),
                         prefixIcon: const Icon(
                           Icons.contact_phone_rounded,
-                          color: Color(0xFF0a233e),
+                          color: Color(0XFF0A233E),
                         ),
                         suffixIcon: IconButton(
                           onPressed: () => nameController.clear(),
-                          color: const Color(0xFF0a233e),
+                          color: const Color(0XFF0A233E),
                           icon: const Icon(Icons.clear),
                         )),
                   ),
@@ -621,14 +550,12 @@ class _AddClientState extends State<AddClient> {
                       MaterialButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate() &&
-                              codeController.text.isNotEmpty &&
                               nameController.text.isNotEmpty &&
                               companyNameController.text.isNotEmpty &&
                               contactController.text.isNotEmpty) {
                             FirebaseFirestore.instance
                                 .collection('client')
                                 .add({
-                              'code': codeController.text,
                               'name': nameController.text,
                               'companyName': companyNameController.text,
                               'contact': contactController.text,
@@ -638,17 +565,16 @@ class _AddClientState extends State<AddClient> {
                               Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                       builder: (context) => ClientMaster()));
+                              Navigator.pop(context);
                             });
-
                             setState(() {
-                              codeController.clear();
                               nameController.clear();
                               companyNameController.clear();
                               contactController.clear();
                             });
                           }
                         },
-                        color: const Color(0xFF0a233e),
+                        color: const Color(0XFF0A233E),
                         child: const Text(
                           'Submit',
                           style: TextStyle(
@@ -660,7 +586,7 @@ class _AddClientState extends State<AddClient> {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        color: const Color(0xFF0a233e),
+                        color: const Color(0XFF0A233E),
                         child: const Text(
                           'Cancel',
                           style: TextStyle(
